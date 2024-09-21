@@ -1,86 +1,96 @@
-# Project Overview
+# 🏥 **AI-Powered Healthcare Platform**
 
-## Introduction
+## 📋 **Introduction**
 
-This project is an AI-powered healthcare platform designed to automate patient interactions, manage appointments, and provide relevant healthcare information. The system leverages modern technologies to create a robust and efficient service that integrates both real-time and traditional web protocols to deliver a seamless user experience.
+This project is an AI-powered healthcare platform designed to automate patient interactions, manage appointments, and provide relevant healthcare information. The system leverages cutting-edge technologies to deliver a robust and efficient service, integrating real-time and traditional web protocols for a seamless user experience.
 
-## Architecture
+## 🛠️ **Architecture**
 
-The architecture is built on a microservices approach, ensuring scalability, modularity, and ease of maintenance. The system consists of the following key components:
+The architecture is built on a **microservices** approach, ensuring scalability, modularity, and ease of maintenance. Key components include:
 
-1. **Frontend**: Build with swift using SwiftUI to create a modern and responsive user interface for patients and healthcare providers.
-2. **Backend**: .NET core with Golang and Python for the AI assistant, providing a high-performance, scalable backend for data processing and interaction management.
-3. **Database**: Microsoft SQL Server (MSSQL) for reliable, high-performance data management.
-4. **Communication Protocols**: WebRTC for real-time communication (audio/video calls) and HTTP for RESTful API business interactions.
+### 🔹 **Frontend**
 
-### High-Level Architecture Diagram
+- **Technology**: `Swift` using `UIKit`
+- **Purpose**: A modern and responsive UI for patients and healthcare providers.
 
-<!-- link to diagram -->
-<!-- local file jpeg -->
+### 🔹 **Backend**
 
-![Alt text](images/arch.png)
+- **Technology**: `.NET Core`, `Golang`, `Python`
+- **Purpose**: High-performance backend for data processing and interaction management.
 
-# Technological Stack
+### 🔹 **Database**
 
-1. **IOS Mobile APP**
+- **Technology**: `Microsoft SQL Server (MSSQL)`
+- **Purpose**: Reliable, high-performance data management.
 
-   • Why? React.js offers a robust framework for building dynamic user interfaces with reusable components, making it ideal for complex, responsive applications like healthcare platforms.
+### 🔹 **Communication Protocols**
 
-2. **Backend: Node.js and Express.js**
+- **WebRTC**: Real-time audio/video calls.
+- **HTTP/HTTPS**: RESTful API interactions.
 
-   • Why? Node.js allows for a high-performance, scalable backend with non-blocking I/O operations, ideal for handling real-time interactions. Express.js provides a lightweight framework to build APIs and manage routes efficiently.
+![Architecture Diagram](images/arch.png)
 
-3. **Database: Microsoft SQL Server (MSSQL)**
+## 🧑‍💻 **Technological Stack**
 
-   • Why MSSQL?
-   • Scalability: MSSQL supports large-scale applications with complex transactions, making it a perfect choice for healthcare systems with high data volume.
-   • Performance: It offers optimized performance with advanced query processing, in-memory capabilities, and enhanced transaction handling.
-   • Security: MSSQL provides robust security features such as data encryption, advanced threat detection, and compliance with industry standards, which are crucial in healthcare.
-   • Integration: Easy integration with other Microsoft tools and services, enhancing the overall productivity and maintenance of the system.
+### 📱 **iOS Mobile App**
 
-4. **Communication Protocols**
+- **Framework**: `UIKit`
+- **Why?** A modern and intuitive framework with tools for creating responsive and visually appealing user interfaces.
 
-   • WebRTC: Used for real-time communication like video and voice calls between patients and healthcare providers. WebRTC offers low-latency connections directly between browsers, enhancing user experience during interactions.
-   • HTTP/HTTPS: Used for traditional RESTful API communication between the frontend and backend, ensuring reliable data transmission and access to user information.
+### ⚙️ **Backend: C# .NET, Golang, Python**
 
-# AI Assistant
+- **Frameworks**: .NET Core, Go-Fiber, FastAPI, PyTorch, Transformers, XTTS
+- **Overview**: Combines C# .NET, Golang, and Python for a high-performance, scalable backend.
 
-The AI Assistant is a key component of the system, providing seamless interaction between users and the healthcare call center. It combines state-of-the-art technologies to deliver an intelligent and efficient conversational experience.
+### 🗄️ **Database: Microsoft SQL Server (MSSQL)**
 
-Key Features:
+- **Scalability**: Supports large-scale applications with complex transactions.
+- **Performance**: Optimized with advanced query processing and in-memory capabilities.
+- **Security**: Robust features like encryption, threat detection, and compliance.
+- **Integration**: Seamless with other Microsoft tools and services.
 
-**Speech-to-Text (STT):** Converts user speech into text using advanced speech recognition models. This allows users to interact naturally with the system without needing to type.
+### 🔗 **Communication Protocols**
 
-**Large Language Model (LLM):** Processes and understands the transcribed text, generating intelligent and contextually relevant responses based on the user’s queries. The LLM is fine-tuned for healthcare-related interactions, ensuring accurate and helpful responses.
+- **WebRTC**: Low-latency real-time communication for audio and video calls.
+- **HTTP/HTTPS**: Reliable data transmission via RESTful APIs.
 
-**Text-to-Speech (TTS):** Converts the generated text responses back into speech, providing a human-like voice output. This enhances the overall user experience by allowing a conversational flow.
+## 🤖 **AI Assistant**
 
-**Low Latency**: The entire process from `STT` to `LLM` processing and TTS generation has a total latency of under `500 milliseconds`. This low latency ensures near real-time interactions, making conversations smooth and responsive.
+The AI Assistant is a cornerstone of the platform, enabling intelligent and seamless interaction between users and the healthcare call center.
 
-Technological Advantages:
+### 🌟 **Key Features**
 
-**Accuracy**: By combining high-quality `STT` and `TTS` models with an LLM, the assistant provides precise and relevant responses, enhancing patient satisfaction.
-Available Languages:
+- **🗣️ Speech-to-Text (STT)**: Converts speech into text using advanced recognition models.
+- **💬 Large Language Model (LLM)**: Processes text to generate intelligent, context-aware responses tailored for healthcare interactions.
+- **🔊 Text-to-Speech (TTS)**: Transforms responses back into speech with a human-like voice output.
+
+### ⚡ **Performance and Latency**
+
+- **Ultra-Low Latency**: End-to-end latency from STT to LLM processing and TTS generation is under **`500 ms`**, ensuring near real-time interactions.
+
+### 🧠 **Technological Advantages**
+
+- **Accuracy**: Combines high-quality `STT` and `TTS` with LLM for precise responses.
+- **Scalability**: Handles over **3000+ concurrent meetings on a single server**.
+- **Security and Compliance**: Adheres to healthcare standards, ensuring data privacy.
+
+### 🌐 **Available Languages:**
 
 ```plaintext
-• English
-• Spanish
-• French
-• German
-• Italian
-• Uzbek
-• Russian
+• English • Spanish • French • German • Italian • Uzbek • Russian
 ```
 
-**Scalability**: Designed to handle numerous concurrent users, `3000+` concurret meetings on a single server, the assistant can scale horizontally to accommodate growing user demands.
+### 📊 **Protocol Performance Overview**
 
-**Security and Compliance**: The assistant adheres to healthcare industry standards, ensuring data privacy and security throughout the interaction.
+| **Protocol**      | **Average Latency (ms)** |
+| ----------------- | ------------------------ |
+| 📞 **WebRTC**     | 50-150 ms                |
+| 🌐 **WebSockets** | 200-300 ms               |
+| 📶 **VoIP**       | 250-400 ms               |
+| 🖥️ **HTTP**       | 500-1000 ms              |
 
-```plaintext
-Protocol       | Average Latency (ms)
---------------------------------------
-WebRTC         |    50-150 ms
-WebSockets     |    200-300 ms
-VoIP           |    250-400 ms
-HTTP           |   500-1000 ms
-```
+# Team Members
+
+- **Mekhriddin Jumayev** - \*IOS/mobile developer - [github](https://github.com/mj8393)
+- **Jonibek Yarashev** - _Backend Developer_ --- [github](https://github.com/YaJohny)
+- **Aslonkhuja Khamidov** - _AI Specialist_ --- [github](https://github.com/aslon1213)

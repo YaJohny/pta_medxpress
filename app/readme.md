@@ -33,8 +33,6 @@ Welcome to the ** MedXpress ** iOS application! This app is developed using UIKi
 ![App Screenshot 1](../images/App_Screen_2.jpg)
 ![App Screenshot 1](../images/App_Screen_3.jpg)
 
-_Add more screenshots as needed to showcase your app interface and functionality._
-
 ## 📖 Getting Started
 
 ### Prerequisites

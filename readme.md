@@ -48,7 +48,9 @@ Our platform provides a comprehensive suite of services tailored to streamline p
 
 The following UML diagram represents the core components of the **AI-powered healthcare platform**, including its users, doctors, appointments, hospitals, and payment system. Each entity is connected in a way that reflects how data flows and is managed within the system to deliver a seamless healthcare experience.
 
-## 🏥 Hospital Entity
+![UML Diagram](images/UML.jpg)
+
+### 🏥 Hospital Entity
 - **Attributes**: 
   - Id
   - Location
@@ -58,7 +60,7 @@ The following UML diagram represents the core components of the **AI-powered hea
   - Each Hospital is associated with multiple **Payments** to track financial transactions involving the hospital and other entities such as **Doctors** and **Users**.
   - The Hospital entity acts as the central institution where doctors are based, and payments are handled, containing details like name and location.
 
-## 👩‍⚕️ Doctor Entity
+### 👩‍⚕️ Doctor Entity
 - **Attributes**: 
   - Id
   - FirstName
@@ -80,7 +82,7 @@ The following UML diagram represents the core components of the **AI-powered hea
   
 Doctors manage their availability through time frames and handle patient consultations. They are linked to the Payment system for tracking financial exchanges and managing their balance.
 
-## 👤 User Entity
+### 👤 User Entity
 - **Attributes**: 
   - Id
   - FirstName
@@ -99,7 +101,7 @@ Doctors manage their availability through time frames and handle patient consult
   
 This entity represents patients using the platform. They interact with doctors for consultations, schedule appointments, and participate in the payment system, with their financial information stored securely.
 
-## 💸 Payment Entity
+### 💸 Payment Entity
 - **Attributes**: 
   - TransactionId
   - SenderId
@@ -112,9 +114,7 @@ This entity represents patients using the platform. They interact with doctors f
 
 This entity manages all financial transactions within the platform, ensuring smooth payments between users and doctors or hospitals. Every transaction is recorded with its corresponding details, providing transparency and tracking.
 
-![UML Diagram](images/UML.jpg)
-
-## 🕰️ TimeFrame Entity
+### 🕰️ TimeFrame Entity
 - **Attributes**: 
   - Id
   - StartDate
@@ -137,12 +137,10 @@ The TimeFrame entity tracks the availability of doctors, enabling patients to sc
 
 Appointments manage the scheduling process. Users select time frames provided by doctors and book them for consultations, ensuring efficient and transparent appointment handling.
 
-## 💳 Interaction Between Entities
+### 💳 Interaction Between Entities
 - The **User** interacts with the **Doctor** through the **Appointment** and **Payment** entities.
 - Doctors provide available time slots through the **TimeFrame**, enabling users to book appointments.
 - Hospitals act as providers for multiple doctors and manage payments through the **Payment** system.
-
-The diagram reflects how different users (patients, doctors, hospitals) interact with each other, ensuring smooth booking, consultation, and payment processes within the platform.
 
 ## 🛠️ **Architecture**
 

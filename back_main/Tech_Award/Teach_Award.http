@@ -1,0 +1,6 @@
+@Teach_Award_HostAddress = http://localhost:5084
+
+GET {{Teach_Award_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

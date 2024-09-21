@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Teach_Award.props" />
+</Project>

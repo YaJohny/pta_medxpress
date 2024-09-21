@@ -1,0 +1,19 @@
+INFO:livekit:livekit_ffi::server:132:livekit_ffi::server - initializing ffi server v0.9.1
+INFO:livekit:livekit_ffi::cabi:27:livekit_ffi::cabi - initializing ffi server v0.9.1
+INFO:livekit:livekit_api::signal_client::signal_stream:96:livekit_api::signal_client::signal_stream - connecting to wss://consultant-ai-weia2b76.livekit.cloud/rtc?sdk=rust&protocol=15&auto_subscribe=1&adaptive_stream=0&access_token=...
+INFO:root:connected to room room_2
+INFO:root:Chat manager created
+INFO:root:connection quality changed for python_bot_2
+INFO:livekit:livekit::room:1027:livekit::room - disconnected from room with reason: UnknownReason
+INFO:root:connection state changed: 0
+ERROR:root:error running user callback for disconnected: room_handle: 3
+disconnected {
+}
+Traceback (most recent call last):
+  File "/home/a/aslon/livekit-assistant/livekit_venv/lib/python3.11/site-packages/livekit/rtc/room.py", line 255, in _listen_task
+    self._on_room_event(event.room_event)
+  File "/home/a/aslon/livekit-assistant/livekit_venv/lib/python3.11/site-packages/livekit/rtc/room.py", line 505, in _on_room_event
+    self.emit("disconnected", event.disconnected.reason)
+  File "/home/a/aslon/livekit-assistant/livekit_venv/lib/python3.11/site-packages/livekit/rtc/_event_emitter.py", line 14, in emit
+    callback(*args, **kwargs)
+TypeError: main.<locals>.on_disconnected() takes 0 positional arguments but 1 was given

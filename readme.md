@@ -48,6 +48,7 @@ Our platform provides a comprehensive suite of services tailored to streamline p
 
 The following UML diagram represents the core components of the **AI-powered healthcare platform**, including its users, doctors, appointments, hospitals, and payment system. Each entity is connected in a way that reflects how data flows and is managed within the system to deliver a seamless healthcare experience.
 
+
 ![UML Diagram](images/UML.jpg)
 
 ### 🏥 Hospital Entity
@@ -127,7 +128,7 @@ This entity manages all financial transactions within the platform, ensuring smo
 
 The TimeFrame entity tracks the availability of doctors, enabling patients to schedule appointments based on real-time availability, ensuring efficient time management.
 
-## 📅 Appointment Entity
+### 📅 Appointment Entity
 - **Attributes**: 
   - Id
   - User.FK

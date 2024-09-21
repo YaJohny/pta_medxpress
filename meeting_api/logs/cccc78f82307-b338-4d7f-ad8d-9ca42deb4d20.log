@@ -1,0 +1,21 @@
+INFO:livekit:livekit_ffi::server:132:livekit_ffi::server - initializing ffi server v0.9.1
+INFO:livekit:livekit_ffi::cabi:27:livekit_ffi::cabi - initializing ffi server v0.9.1
+INFO:livekit:livekit_api::signal_client::signal_stream:96:livekit_api::signal_client::signal_stream - connecting to wss://consultant-ai-weia2b76.livekit.cloud/rtc?sdk=rust&protocol=15&auto_subscribe=1&adaptive_stream=0&access_token=...
+INFO:root:connected to room 78f82307-b338-4d7f-ad8d-9ca42deb4d20
+INFO:root:Chat manager created
+INFO:root:connection quality changed for python_bot_2
+INFO:root:participant connected: PA_uBxKZMLeqahU Jonibek_Yo'ldoshov
+INFO:root:connection quality changed for Jonibek_Yo'ldoshov
+INFO:faster_whisper:Processing audio with duration 00:02.400
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-7' coro=<receive_audio_frames() done, defined at /home/a/aslon/livekit-assistant/async_functions.py:264> exception=KeyError('data')>
+Traceback (most recent call last):
+  File "/home/a/aslon/livekit-assistant/async_functions.py", line 354, in receive_audio_frames
+    stt_text = await translate_text(full_text, "en")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/a/aslon/livekit-assistant/async_functions.py", line 261, in translate_text
+    return response.json()["data"]["translations"][0]["translatedText"]
+           ~~~~~~~~~~~~~~~^^^^^^^^
+KeyError: 'data'
+INFO:root:connection quality changed for Jonibek_Yo'ldoshov
+INFO:root:track unsubscribed: TR_AM3aX88mtg2dnp

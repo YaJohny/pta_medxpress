@@ -1,0 +1,9 @@
+INFO:livekit:livekit_ffi::server:132:livekit_ffi::server - initializing ffi server v0.9.1
+INFO:livekit:livekit_ffi::cabi:27:livekit_ffi::cabi - initializing ffi server v0.9.1
+INFO:livekit:livekit_api::signal_client::signal_stream:96:livekit_api::signal_client::signal_stream - connecting to wss://consultant-ai-weia2b76.livekit.cloud/rtc?sdk=rust&protocol=15&auto_subscribe=1&adaptive_stream=0&access_token=...
+INFO:root:connected to room room_2
+INFO:root:Chat manager created
+INFO:root:connection quality changed for python_bot_2
+INFO:livekit:livekit::room:1027:livekit::room - disconnected from room with reason: DuplicateIdentity
+ERROR:livekit:error putting to queue: Event loop is closed
+ERROR:livekit:error putting to queue: Event loop is closed

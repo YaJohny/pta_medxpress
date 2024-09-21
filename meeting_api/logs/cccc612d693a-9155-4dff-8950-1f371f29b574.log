@@ -1,0 +1,4 @@
+INFO:livekit:livekit_ffi::server:132:livekit_ffi::server - initializing ffi server v0.9.1
+INFO:livekit:livekit_ffi::cabi:27:livekit_ffi::cabi - initializing ffi server v0.9.1
+INFO:livekit:livekit_api::signal_client::signal_stream:96:livekit_api::signal_client::signal_stream - connecting to wss://consultant-ai-weia2b76.livekit.cloud/rtc?sdk=rust&protocol=15&auto_subscribe=1&adaptive_stream=0&access_token=...
+ERROR:livekit:livekit_ffi::server::room:249:livekit_ffi::server::room - error while connecting to a room: engine: connection error: wait_pc_connection timed out

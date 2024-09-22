@@ -7,7 +7,12 @@ from dotenv import load_dotenv
 import numpy as np
 import time
 import torch
-from async_functions import receive_audio_frames, publish_frame_from_queue
+from async_functions import (
+    receive_audio_frames,
+    publish_frame_from_queue,
+    receive_video_frames,
+    publish_frame_from_queue_video,
+)
 import concurrent.futures
 import threading
 import sys
@@ -19,6 +24,7 @@ identity_name = sys.argv[4]
 
 SAMPLE_RATE = 48000
 NUM_CHANNELS = 1
+WIDTH, HEIGHT = 1280, 720
 
 
 def get_token():
@@ -144,6 +150,12 @@ async def main(loop: asyncio.AbstractEventLoop = None, room: rtc.Room = None):
             audio_stream = rtc.AudioStream(track)
 
             asyncio.ensure_future(receive_audio_frames(audio_stream, source))
+        if track.kind == rtc.TrackKind.KIND_VIDEO:
+            print("Subscribed to a Video Track")
+            print("Track info: ", track)
+            video_stream = rtc.VideoStream(track)
+            asyncio.ensure_future(receive_video_frames(video_stream))
+            # asyncio.ensure_future(publish_frame_from_queue_video(video_source))
 
     print("Particapants: ", room.remote_participants)
     print("Tracks: ", room)
@@ -178,6 +190,16 @@ def run_publish_in_thread(source):
     loop.close()
 
 
+def run_publish_in_thread_video(source):
+    """This function will run in a separate thread to handle publish_frame_from_queue."""
+    loop = asyncio.new_event_loop()  # Create a new event loop for this thread
+    asyncio.set_event_loop(loop)  # Set it as the current thread's event loop
+
+    # Now we can safely run the coroutine in this new event loop
+    loop.run_until_complete(publish_frame_from_queue_video(source))
+    loop.close()
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
@@ -198,21 +220,37 @@ if __name__ == "__main__":
 
     # Publish audio track
     source = rtc.AudioSource(SAMPLE_RATE, NUM_CHANNELS)
+
     track_output = rtc.LocalAudioTrack.create_audio_track("sinewave", source)
     options = rtc.TrackPublishOptions()
     options.source = rtc.TrackSource.SOURCE_MICROPHONE
 
-    print("Publishing track")
+    print("Publishing track audio")
     publish_track_task = asyncio.run_coroutine_threadsafe(
         room.local_participant.publish_track(track_output, options), loop
     )
-    print("Track published: ", track_output)
+    print("Track published audio: ", track_output)
+    print("Publishing track video")
+    # video_source = rtc.VideoSource(WIDTH, HEIGHT)
+    # video_track_output = rtc.LocalVideoTrack.create_video_track("camera", video_source)
+    # video_options = rtc.TrackPublishOptions()
+    # video_options.source = rtc.TrackSource.SOURCE_CAMERA
+    # publish_video_track_task = asyncio.run_coroutine_threadsafe(
+    #     room.local_participant.publish_track(video_track_output, video_options), loop
+    # )
+    # print("Track published video: ", video_track_output)
 
     # Schedule the main logic
 
     # Run the publish_frame_from_queue in a separate thread
     publish_thread = threading.Thread(target=run_publish_in_thread, args=(source,))
     publish_thread.start()
+
+    # run publish_frame for video
+    # publish_thread_video = threading.Thread(
+    #     target=run_publish_in_thread_video, args=(video_source,)
+    # )
+    # publish_thread_video.start()
 
     try:
         # Run the event loop forever

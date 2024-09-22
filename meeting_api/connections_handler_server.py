@@ -14,9 +14,6 @@ load_dotenv(".env.production")
 app = FastAPI()
 
 
-#
-
-
 def get_token(identity_name, room_name, name):
     token = (
         api.AccessToken()
@@ -44,25 +41,49 @@ def docs():
 ######## AI ROOMS ########
 counter = 0
 
+######## DOCTOR ROOMS ########
+BASE_URL_GOLANG = os.getenv("BASE_URL_GOLANG")
 
-@app.get("/room/ai/make")
-def make_room():
+
+@app.get("/room/get_token/user")
+def get_token_ai(identity_name: str, room_id: str, name: str):
+    try:
+        token = get_token(identity_name, room_id, name)
+        return JSONResponse(content={"token": token})
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@app.get("/room/get_token/doctor")
+def get_token_ai(identity_name: str, room_id: str, name: str):
+    try:
+        identity_name = "doctor_" + identity_name
+        name = "Doctor: " + name
+        token = get_token(identity_name, room_id, name)
+        return JSONResponse(content={"token": token})
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@app.get("/room/add/ai")
+def add_ai(room_id: str):
     global counter
     try:
-        room_id = uuid4()
         ppp = subprocess.Popen(
             [
                 "python",
                 "new_server.py",
                 "load",
                 "ru",
-                str(room_id),
+                room_id,
                 "python_bot_2",
                 str(counter // 3),
             ]
         )
 
-        processes[str(room_id)] = ppp
+        processes[room_id] = ppp
         counter += 1
         time.sleep(35)
         return JSONResponse(content={"room_id": str(room_id)})
@@ -72,8 +93,8 @@ def make_room():
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-@app.get("/room/ai/stop")
-def stop_room(room_id: str):
+@app.get("/room/remove/ai")
+def remove_ai(room_id: str):
     try:
         ppp = processes.get(room_id)
         if ppp:
@@ -88,24 +109,10 @@ def stop_room(room_id: str):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-@app.get("/room/ai/get_token")
-def get_token_ai(identity_name: str, room_id: str, name: str):
-    try:
-        token = get_token(identity_name, room_id, name)
-        return JSONResponse(content={"token": token})
-    except Exception as e:
-        print(e)
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+@app.get("/room/make")
+def make_room():
 
-
-######## DOCTOR ROOMS ########
-BASE_URL_GOLANG = os.getenv("BASE_URL_GOLANG")
-
-
-@app.get("/room/doctor/make")
-def make_room_doctor():
-
-    resp = requests.post(BASE_URL_GOLANG + "/room/create")
+    resp = requests.post(BASE_URL_GOLANG + "/room")
     if resp.status_code == 200:
         room_id = resp.json()["room_id"]
         return JSONResponse(content=resp.json())
@@ -116,25 +123,12 @@ def make_room_doctor():
             return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-@app.get("/room/doctor/stop")
+@app.get("/room/stop")
 def stop_room_doctor(room_id: str):
-    resp = requests.delete(BASE_URL_GOLANG + "/room/stop" + f"?room_id={room_id}")
-    if resp.status_code == 200:
-        return JSONResponse(content=resp.json())
-    else:
-        try:
-            return JSONResponse(content=resp.json(), status_code=500)
-        except Exception as e:
-            return JSONResponse(content={"error": str(e)}, status_code=500)
-
-
-@app.get("/room/doctor/get_token")
-def get_token_doctor(room_id: str, identity_name: str, name: str):
-    resp = requests.post(
-        BASE_URL_GOLANG
-        + "/room/stop"
-        + f"?room_id={room_id}&identity_name={identity_name}&name={name}"
-    )
+    if processes.get(room_id, False):
+        ppp = processes.get(room_id)
+        ppp.kill()
+    resp = requests.delete(BASE_URL_GOLANG + "/room" + f"?room_id={room_id}")
     if resp.status_code == 200:
         return JSONResponse(content=resp.json())
     else:

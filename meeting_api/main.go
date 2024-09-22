@@ -2,21 +2,31 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"os"
 	"time"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 
 	"github.com/livekit/protocol/auth"
 	"github.com/livekit/protocol/livekit"
 	lksdk "github.com/livekit/server-sdk-go/v2"
 )
 
-var host = "https://my.livekit.host"
-var roomClient = lksdk.NewRoomServiceClient(host, os.Getenv("LIVEKIT_API_KEY"), os.Getenv("LIVEKIT_API_SECRET"))
+func Init() {
+	host = os.Getenv("LIVEKIT_HOST")
+	roomClient = lksdk.NewRoomServiceClient(host, os.Getenv("LIVEKIT_API_KEY"), os.Getenv("LIVEKIT_API_SECRET"))
+}
 
-func CreateRoom(c fiber.Ctx) error {
+var host string
+var roomClient *lksdk.RoomServiceClient
+
+func CreateRoom(c *fiber.Ctx) error {
 	room_name := uuid.New().String()
 
 	room, err := roomClient.CreateRoom(context.Background(), &livekit.CreateRoomRequest{
@@ -54,7 +64,7 @@ func getJoinToken(apiKey, apiSecret, room, identity, name string) (string, error
 	return at.ToJWT()
 }
 
-func GenerateToken(c fiber.Ctx) error {
+func GenerateToken(c *fiber.Ctx) error {
 	api_key := os.Getenv("LIVEKIT_API_KEY")
 	api_secret := os.Getenv("LIVEKIT_API_SECRET")
 	room := c.Query("room_id")
@@ -77,9 +87,9 @@ func GenerateToken(c fiber.Ctx) error {
 	)
 }
 
-func StopRoom(c fiber.Ctx) error {
+func StopRoom(c *fiber.Ctx) error {
 	room_id := c.Query("room_id")
-	_, err := roomClient.DeleteRoom(context.Background(), &livekit.DeleteRoomRequest{
+	resp, err := roomClient.DeleteRoom(context.Background(), &livekit.DeleteRoomRequest{
 		Room: room_id,
 	})
 	if err != nil {
@@ -89,24 +99,47 @@ func StopRoom(c fiber.Ctx) error {
 			},
 		)
 	}
+
 	return c.Status(200).JSON(
 		fiber.Map{
 			"room_id": room_id,
+			"resp":    resp.String(),
 		},
 	)
 
 }
 
-func load_envs() {
+func load_envs() error {
+
+	err := godotenv.Load(".env.production")
+	if err != nil {
+		return err
+	}
+	return nil
 
 }
 
 // func GenerateToken( c)
 
 func main() {
-	load_envs()
-	app := fiber.App{}
+	err := load_envs()
+	// init
+	Init()
+	fmt.Println("Client created")
 
+	if err != nil {
+		log.Fatal("Error loading .env file")
+		os.Exit(1)
+	}
+
+	app := fiber.New()
+
+	app.Get("/metrics", monitor.New())
+	app.Use(logger.New(logger.Config{
+		Format:     "${pid} ${status} - ${method} ${path}\n",
+		TimeFormat: "02-Jan-2006",
+		TimeZone:   "America/New_York",
+	}))
 	// rotues
 
 	// app.Get("/", CreateRoom)
@@ -117,6 +150,9 @@ func main() {
 	// stop
 	// get token
 
-	app.Listen(":9292")
+	err = app.Listen(":9292")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

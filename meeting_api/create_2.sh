@@ -1,1 +1,1 @@
-python new_server.py load ru e7bc2074-38cb-49d9-98f1-1275fbb7ad93 python_bot_2 1
+python new_server.py load en 837f09a4-12c4-4b68-8cc3-d23842cf2128 python_bot_2 1

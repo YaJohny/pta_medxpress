@@ -8,3 +8,7 @@ lib64/
 /output/output_*.wav
 venv/
 __pycache__
+*.log
+*.ipynb
+frames/
+*.png

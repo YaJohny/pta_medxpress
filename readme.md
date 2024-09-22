@@ -4,6 +4,10 @@
 
 This project is an AI-powered healthcare platform designed to automate patient interactions, manage appointments, and provide relevant healthcare information. The system leverages cutting-edge technologies to deliver a robust and efficient service, integrating real-time and traditional web protocols for a seamless user experience. User have access to free provided consultations, appointments, and can get information about their health status.
 
+<!-- video link -->
+
+[![Watch the Demo](https://img.youtube.com/vi/1Q3JZ4w1l1A/maxresdefault.jpg)](https://smarty.smartbank.uz/mdx/get_video?filename=demo.mp4)
+
 🚀 Services
 
 Our platform provides a comprehensive suite of services tailored to streamline patient-provider interactions and optimize healthcare operations. Below are the key services offered:
@@ -48,11 +52,11 @@ Our platform provides a comprehensive suite of services tailored to streamline p
 
 The following UML diagram represents the core components of the **AI-powered healthcare platform**, including its users, doctors, appointments, hospitals, and payment system. Each entity is connected in a way that reflects how data flows and is managed within the system to deliver a seamless healthcare experience.
 
-
 ![UML Diagram](images/UML.jpg)
 
 ### 🏥 Hospital Entity
-- **Attributes**: 
+
+- **Attributes**:
   - Id
   - Location
   - HospitalName
@@ -62,7 +66,8 @@ The following UML diagram represents the core components of the **AI-powered hea
   - The Hospital entity acts as the central institution where doctors are based, and payments are handled, containing details like name and location.
 
 ### 👩‍⚕️ Doctor Entity
-- **Attributes**: 
+
+- **Attributes**:
   - Id
   - FirstName
   - LastName
@@ -80,11 +85,12 @@ The following UML diagram represents the core components of the **AI-powered hea
   - Linked with **Payment** for handling payments related to appointments and consultations.
   - Connected to **TimeFrame** to define their available time slots.
   - Can be part of a hospital, but may also operate independently.
-  
+
 Doctors manage their availability through time frames and handle patient consultations. They are linked to the Payment system for tracking financial exchanges and managing their balance.
 
 ### 👤 User Entity
-- **Attributes**: 
+
+- **Attributes**:
   - Id
   - FirstName
   - LastName
@@ -99,11 +105,12 @@ Doctors manage their availability through time frames and handle patient consult
 - **Relationships**:
   - Users can make payments, which are tracked in the **Payment** entity.
   - Users schedule appointments with doctors, managed through the **Appointment** entity.
-  
+
 This entity represents patients using the platform. They interact with doctors for consultations, schedule appointments, and participate in the payment system, with their financial information stored securely.
 
 ### 💸 Payment Entity
-- **Attributes**: 
+
+- **Attributes**:
   - TransactionId
   - SenderId
   - ReceiverId
@@ -116,7 +123,8 @@ This entity represents patients using the platform. They interact with doctors f
 This entity manages all financial transactions within the platform, ensuring smooth payments between users and doctors or hospitals. Every transaction is recorded with its corresponding details, providing transparency and tracking.
 
 ### 🕰️ TimeFrame Entity
-- **Attributes**: 
+
+- **Attributes**:
   - Id
   - StartDate
   - EndDate
@@ -129,7 +137,8 @@ This entity manages all financial transactions within the platform, ensuring smo
 The TimeFrame entity tracks the availability of doctors, enabling patients to schedule appointments based on real-time availability, ensuring efficient time management.
 
 ### 📅 Appointment Entity
-- **Attributes**: 
+
+- **Attributes**:
   - Id
   - User.FK
   - TimeFrame.FK
@@ -139,6 +148,7 @@ The TimeFrame entity tracks the availability of doctors, enabling patients to sc
 Appointments manage the scheduling process. Users select time frames provided by doctors and book them for consultations, ensuring efficient and transparent appointment handling.
 
 ### 💳 Interaction Between Entities
+
 - The **User** interacts with the **Doctor** through the **Appointment** and **Payment** entities.
 - Doctors provide available time slots through the **TimeFrame**, enabling users to book appointments.
 - Hospitals act as providers for multiple doctors and manage payments through the **Payment** system.

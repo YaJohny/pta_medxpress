@@ -50,108 +50,37 @@ Our platform provides a comprehensive suite of services tailored to streamline p
 
 ## 📝 **UML Diagram: System Architecture Overview**
 
-The following UML diagram represents the core components of the **AI-powered healthcare platform**, including its users, doctors, appointments, hospitals, and payment system. Each entity is connected in a way that reflects how data flows and is managed within the system to deliver a seamless healthcare experience.
+This AI-powered healthcare platform connects **Users**, **Doctors**, **Hospitals**, and a **Payment** system to manage appointments, consultations, and financial transactions.
 
 ![UML Diagram](images/UML.jpg)
 
 ### 🏥 Hospital Entity
-
-- **Attributes**:
-  - Id
-  - Location
-  - HospitalName
-  - ImageAvatar
-- **Relationships**:
-  - Each Hospital is associated with multiple **Payments** to track financial transactions involving the hospital and other entities such as **Doctors** and **Users**.
-  - The Hospital entity acts as the central institution where doctors are based, and payments are handled, containing details like name and location.
+- **Attributes**: Id, Location, HospitalName, ImageAvatar
+- **Relationships**: Linked to multiple **Payments** for tracking transactions. Hospitals host doctors and manage payment flows.
 
 ### 👩‍⚕️ Doctor Entity
-
-- **Attributes**:
-  - Id
-  - FirstName
-  - LastName
-  - MiddleName
-  - Sex
-  - ImageAvatar
-  - Age
-  - Specialization
-  - WorkPlace
-  - Datetime
-  - Email
-  - Password
-  - Balance
-- **Relationships**:
-  - Linked with **Payment** for handling payments related to appointments and consultations.
-  - Connected to **TimeFrame** to define their available time slots.
-  - Can be part of a hospital, but may also operate independently.
-
-Doctors manage their availability through time frames and handle patient consultations. They are linked to the Payment system for tracking financial exchanges and managing their balance.
+- **Attributes**: Id, FirstName, LastName, Specialization, WorkPlace, Email, Balance
+- **Relationships**: Linked to **Payment** for handling consultations and **TimeFrame** for scheduling availability. May be part of a hospital or operate independently.
 
 ### 👤 User Entity
-
-- **Attributes**:
-  - Id
-  - FirstName
-  - LastName
-  - MiddleName
-  - Sex
-  - ImageAvatar
-  - Age
-  - Datetime
-  - Email
-  - Password
-  - Balance
-- **Relationships**:
-  - Users can make payments, which are tracked in the **Payment** entity.
-  - Users schedule appointments with doctors, managed through the **Appointment** entity.
-
-This entity represents patients using the platform. They interact with doctors for consultations, schedule appointments, and participate in the payment system, with their financial information stored securely.
+- **Attributes**: Id, FirstName, LastName, Email, Balance
+- **Relationships**: Users book appointments via **TimeFrame** and make payments via the **Payment** system.
 
 ### 💸 Payment Entity
-
-- **Attributes**:
-  - TransactionId
-  - SenderId
-  - ReceiverId
-  - Amount
-  - Datetime
-- **Relationships**:
-  - Connected to both **User** and **Doctor**, as they can be the sender or receiver of payments.
-  - Payments are also linked to the **Hospital** entity.
-
-This entity manages all financial transactions within the platform, ensuring smooth payments between users and doctors or hospitals. Every transaction is recorded with its corresponding details, providing transparency and tracking.
+- **Attributes**: TransactionId, SenderId, ReceiverId, Amount, Datetime
+- **Relationships**: Tracks payments between **Users**, **Doctors**, and **Hospitals**.
 
 ### 🕰️ TimeFrame Entity
-
-- **Attributes**:
-  - Id
-  - StartDate
-  - EndDate
-  - Doctor.FK
-  - DayOfWeek
-- **Relationships**:
-  - Each Doctor can have multiple time frames defining their availability for appointments.
-  - Time frames are linked to **Appointment**, where users can choose a slot to meet with doctors.
-
-The TimeFrame entity tracks the availability of doctors, enabling patients to schedule appointments based on real-time availability, ensuring efficient time management.
+- **Attributes**: Id, StartDate, EndDate, DoctorId, DayOfWeek
+- **Relationships**: Defines **Doctor** availability for **Appointments**.
 
 ### 📅 Appointment Entity
+- **Attributes**: Id, UserId, TimeFrameId
+- **Relationships**: Links **Users** to available time slots for consultations with **Doctors**.
 
-- **Attributes**:
-  - Id
-  - User.FK
-  - TimeFrame.FK
-- **Relationships**:
-  - Appointments are linked to both **User** and **TimeFrame**, allowing patients to book available time slots for consultations.
-
-Appointments manage the scheduling process. Users select time frames provided by doctors and book them for consultations, ensuring efficient and transparent appointment handling.
-
-### 💳 Interaction Between Entities
-
-- The **User** interacts with the **Doctor** through the **Appointment** and **Payment** entities.
-- Doctors provide available time slots through the **TimeFrame**, enabling users to book appointments.
-- Hospitals act as providers for multiple doctors and manage payments through the **Payment** system.
+### 💳 Entity Interactions
+- **Users** book appointments with **Doctors** through **TimeFrames** and handle payments via the **Payment** system.
+- **Hospitals** facilitate transactions and host doctors.
 
 ## 🛠️ **Architecture**
 

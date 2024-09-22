@@ -40,8 +40,10 @@ NUM_CHANNELS = 1
 import queue
 
 audio_frames_que = queue.Queue(maxsize=100)
+video_frames_que = queue.Queue(maxsize=100)
 # audio_frames_que = asyncio.Queue(10)
-tokens_que = asyncio.Queue(10)
+tokens_que = asyncio.Queue(100)
+recent_frame = None
 
 
 async def publish_frame_from_queue(
@@ -81,6 +83,43 @@ async def publish_frame_from_queue(
         file_num += 1
 
 
+WIDTH, HEIGHT = 1280, 720
+
+import colorsys
+
+
+async def publish_frame_from_queue_video(
+    source: rtc.VideoSource,
+):
+    global WIDTH, HEIGHT
+    argb_frame = bytearray(WIDTH * HEIGHT * 4)
+    arr = np.frombuffer(argb_frame, dtype=np.uint8)
+
+    framerate = 1 / 30
+    hue = 0.0
+
+    while True:
+        start_time = asyncio.get_event_loop().time()
+
+        rgb = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
+        rgb = [(x * 255) for x in rgb]  # type: ignore
+
+        argb_color = np.array(rgb + [255], dtype=np.uint8)
+        arr.flat[::4] = argb_color[0]
+        arr.flat[1::4] = argb_color[1]
+        arr.flat[2::4] = argb_color[2]
+        arr.flat[3::4] = argb_color[3]
+
+        frame = rtc.VideoFrame(WIDTH, HEIGHT, rtc.VideoBufferType.RGBA, argb_frame)
+        source.capture_frame(frame)
+        hue = (hue + framerate / 3) % 1.0
+
+        code_duration = asyncio.get_event_loop().time() - start_time
+        await asyncio.sleep(1 / 30 - code_duration)
+
+    # send video
+
+
 async def send_audio_frames(
     source: rtc.AudioSource,
 ):
@@ -95,7 +134,7 @@ async def send_audio_frames(
 
         token, streaming = await tokens_que.get()
         printing.printred(f"GOT TOKEN FROM QUEUE: {token} ----- STREAMING: {streaming}")
-        async for data in ttswrapper(token, "ru", streaming):
+        async for data in ttswrapper(token, sys.argv[2], streaming):
 
             # await audio_frames_que.put(data)
             printing.printyellow(f"PUT DATA TO QUEUE - {len(data)}")
@@ -152,15 +191,15 @@ async def send_audio_frames(
 vad_model = load_silero_vad(onnx=True)
 
 
-@timer
+# @timer
 def check_vad(filename):
     """
 
     Returns True if the speech is stopped and the audio is less than 300ms
     Returns False if the speech is still ongoing
     """
-    print("Doing vad")
-    limit = 500
+    # print("Doing vad")
+    limit = 300
     try:
         wav = read_audio(filename)
         full_wav_length = len(wav)
@@ -172,12 +211,10 @@ def check_vad(filename):
             min_speech_duration_ms=300,
         )
 
-        printing.printlightblue("Speech timestamps: " + str(speech_timestamps))
+        # printing.printlightblue("Speech timestamps: " + str(speech_timestamps))
         if len(speech_timestamps) == 0:
             # no speech detected so keep listening
             raise Exception("No speech detected so delete the file")
-
-            return True, ""
         last_speech_timestamp = speech_timestamps[-1]
         printing.printlightblue("Full wav length: " + str(full_wav_length))
         printing.printlightblue(
@@ -185,7 +222,7 @@ def check_vad(filename):
         )
         end_of_last_speech = last_speech_timestamp["end"]
     except Exception as e:
-        print("Error: ", e)
+        # print("Error: ", e)
         return True, ""
     # the limit of the last speech timestamp
     # the limit is 300ms
@@ -284,6 +321,7 @@ async def receive_audio_frames(audio_stream: rtc.AudioStream, source: rtc.audio_
     else:
         index_num = 2
     llm_data = str(get_medx_user_data(index_num))
+    ##### to to tts from tokens queue and send to audio frames queue
     asyncio.ensure_future(send_audio_frames(source))
     should_break = False
 
@@ -325,14 +363,14 @@ async def receive_audio_frames(audio_stream: rtc.AudioStream, source: rtc.audio_
                 if sending_audio:
                     break
 
-                if i > 0 and i % 30 == 0:
+                if i > 0 and i % 50 == 0:
                     loop_time = time.time()
                     try:
                         speech_ongoing, full_text = check_vad(output_filename)
                         if speech_ongoing:
                             # printing.printpink("Speech is still ongoing")
                             continue
-                        # printing.printpink("Speech is stopped")
+                        printing.printpink("Speech is stopped")
                         should_break = True
                         new_speech_from_user_condition = True
                     except Exception as e:
@@ -366,11 +404,12 @@ async def receive_audio_frames(audio_stream: rtc.AudioStream, source: rtc.audio_
                     llm_text_full = ""
 
                     # LLM USAGE --- GROQ
-                    for token in groq_client.QueryStreams(
+                    for token in groq_client.QueryVision(
                         messages=groq_client.ConstructMessages(
                             context=llm_data,
                             messages=messages,
-                        )
+                        ),
+                        latest_image="frames/temp_frame.png",
                     ):
                         if j == 0:
                             printing.printred(
@@ -408,3 +447,139 @@ async def receive_audio_frames(audio_stream: rtc.AudioStream, source: rtc.audio_
                     # time.sleep(5)
                     break
                 # return
+
+
+import mediapipe as mp
+from mediapipe import solutions
+from mediapipe.framework.formats import landmark_pb2
+import cv2
+
+
+async def receive_video_frames(video_stream: rtc.VideoStream):
+    frame_counter = 0  # Counter to keep track of frame numbers
+
+    async for frame in video_stream:
+        frame_event = frame.frame
+
+        # Extract the frame dimensions and buffer
+        actual_width = frame_event.width
+        actual_height = frame_event.height
+        buffer = frame_event.data
+        buffer_size = len(buffer)
+
+        # Expected size for RGB format
+        expected_size = actual_width * actual_height * 3
+        compressed_expected_size = expected_size // 2  # Assuming YUV420 compression
+
+        # Handle compressed format (e.g., YUV420)
+        if buffer_size == compressed_expected_size:
+            # print("Detected compressed format, converting to BGR...")
+            # Convert YUV to BGR to address green tint
+            yuv_frame = np.frombuffer(buffer, dtype=np.uint8).reshape(
+                (int(actual_height * 1.5), actual_width)
+            )
+            frame_converted = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2BGR_I420)
+
+        # Handle uncompressed RGB format
+        elif buffer_size == expected_size:
+            frame_converted = np.frombuffer(buffer, dtype=np.uint8).reshape(
+                (actual_height, actual_width, 3)
+            )
+
+        else:
+            print(
+                f"Error: Buffer size {buffer_size} does not match expected sizes. Skipping frame."
+            )
+            continue
+
+        # Optional: Resize if needed
+        # frame_converted = cv2.resize(frame_converted, (640, 480))  # Resize if required
+
+        # Save the frame as an image file
+        recent_frame = frame_converted
+        output_filename = f"frames/temp_frame.png"  # Saves frames as PNG files with zero-padded numbering
+        cv2.imwrite(output_filename, frame_converted)
+        # print(f"Saved frame {frame_counter} as {output_filename}")
+
+        # frame_counter += 1  # Increment the frame counter
+
+    print("Finished saving frames.")
+
+
+# async def receive_video_frames(video_stream: rtc.VideoStream):
+#     # save
+#     # save to file
+#     # print("Started Receiving video frames")
+#     # # Set up video writer parameters
+#     # output_filename = "output_video.mp4"  # Output file name
+#     # frame_width = 960
+#     # frame_height = 540
+#     # fps = 60  # Frames per second
+#     # # Define codec and create VideoWriter object
+#     # fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Codec for MP4 files
+#     # out = cv2.VideoWriter(output_filename, fourcc, fps, (frame_width, frame_height))
+#     # async for frame_event in video_stream:
+
+#     #     buffer = frame_event.frame
+#     #     print("Frame width: ", buffer.width)
+#     #     print("Frame height: ", buffer.height)
+#     #     arr = np.frombuffer(buffer.data, dtype=np.uint8)
+#     #     arr = arr.reshape((buffer.height, buffer.width, 3))
+#     #     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=arr)
+#     #     arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+#     #     cv2.imshow("Frame", arr)
+
+#     output_filename = "output_video.mp4"
+#     frame_width, frame_height = 640, 480  # Frame dimensions
+#     fps = 60  # Frames per second
+
+#     # Define codec and create VideoWriter object
+#     fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Codec for MP4 files
+#     out = cv2.VideoWriter(output_filename, fourcc, fps, (frame_width, frame_height))
+
+#     async for frame in video_stream:
+#         frame_event = frame.frame
+
+#         # Get the actual width, height, and buffer size of the frame
+#         actual_width = frame_event.width
+#         actual_height = frame_event.height
+#         buffer = frame_event.data
+#         buffer_size = len(buffer)
+
+#         # Check if the buffer size matches a known format; double the expected size for compressed formats
+#         expected_size = actual_width * actual_height * 3  # For RGB
+#         compressed_expected_size = (
+#             expected_size // 2
+#         )  # Assuming a common compression (like YUV420)
+
+#         # Check if buffer matches the expected compressed size
+#         if buffer_size != expected_size and buffer_size == compressed_expected_size:
+#             # Convert the buffer to YUV format
+#             print("Detected compressed format, converting...")
+#             yuv_frame = np.frombuffer(buffer, dtype=np.uint8).reshape(
+#                 (int(actual_height * 1.5), actual_width)
+#             )
+#             frame_converted = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_I420)
+
+#         elif buffer_size == expected_size:
+#             # For uncompressed RGB data
+#             frame_converted = np.frombuffer(buffer, dtype=np.uint8).reshape(
+#                 (actual_height, actual_width, 3)
+#             )
+
+#         else:
+#             print(
+#                 f"Error: Buffer size {buffer_size} does not match expected sizes. Skipping frame."
+#             )
+#             continue
+
+#         # Optional: Resize frame to match the VideoWriter's expected dimensions
+#         if (actual_width, actual_height) != (frame_width, frame_height):
+#             frame_converted = cv2.resize(frame_converted, (frame_width, frame_height))
+
+#         # Write the frame to the video file
+#         out.write(frame_converted)
+
+#     # Release the VideoWriter when done
+#     out.release()
+#     print("Video saved successfully!")

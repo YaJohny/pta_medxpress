@@ -4,6 +4,10 @@
 
 This project is an AI-powered healthcare platform designed to automate patient interactions, manage appointments, and provide relevant healthcare information. The system leverages cutting-edge technologies to deliver a robust and efficient service, integrating real-time and traditional web protocols for a seamless user experience. User have access to free provided consultations, appointments, and can get information about their health status.
 
+<!-- video link -->
+
+[![Watch the Demo](https://img.youtube.com/vi/1Q3JZ4w1l1A/maxresdefault.jpg)](https://smarty.smartbank.uz/mdx/get_video?filename=demo.mp4)
+
 🚀 Services
 
 Our platform provides a comprehensive suite of services tailored to streamline patient-provider interactions and optimize healthcare operations. Below are the key services offered:
@@ -47,7 +51,6 @@ Our platform provides a comprehensive suite of services tailored to streamline p
 ## 📝 **UML Diagram: System Architecture Overview**
 
 This AI-powered healthcare platform connects **Users**, **Doctors**, **Hospitals**, and a **Payment** system to manage appointments, consultations, and financial transactions.
-
 
 ![UML Diagram](images/UML.jpg)
 

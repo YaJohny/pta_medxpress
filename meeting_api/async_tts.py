@@ -43,8 +43,8 @@ def calculate_the_token_length(text, language="en"):
 
 
 async def ttswrapper(text, language, streaming):
-    # if language == "uz":
-    #     output = synthesize(text, "./yandex_output.wav")
+    if language == "uz":
+        language = "ru"
 
     token_length = calculate_the_token_length(text, language)
     chunking_required = False

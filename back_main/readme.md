@@ -1,7 +1,3 @@
-Here’s the updated `README.md` with some emojis for a more engaging presentation:
-
----
-
 # 🏥 AI Medical Consultation App
 
 Welcome to the **AI Medical Consultation App** repository! This project leverages artificial intelligence to provide medical consultations via a **C#** and **ASP.NET Web API** backend. 
@@ -64,7 +60,3 @@ Authorization: Bearer <your-token>
 
 Contributions are welcome! Feel free to submit issues or create pull requests to improve this app. 😊
 
-
----
-
-The emojis should add a bit of fun and make the README more visually appealing!
